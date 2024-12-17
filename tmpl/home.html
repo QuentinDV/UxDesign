@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products with Pagination</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>My E-Commerce</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Products List</h1>
+    <div class="pagination">
+        {{if .PreviousPage}}
+        <button onclick="window.location.href='/home?page={{.PreviousPage}}'">Previous</button>
+        {{end}}
+        {{if .NextPage}}
+        <button onclick="window.location.href='/home?page={{.NextPage}}'">Next</button>
+        {{end}}
+    </div>
+    <div id="product-grid">
+        {{range .Products}}
+        <div class="product-card">
+            <img src="{{.ImageURL}}" alt="{{.Name}}">
+            <h2>{{.Name}}</h2>
+            <p>{{.Description}}</p>
+            <p>Price: {{printf "%.2f" .Price}}€</p>
+        </div>
+        {{end}}
+    </div>
+    
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nextButton = document.querySelector(".pagination .next");
+        const prevButton = document.querySelector(".pagination .previous");
+
+        if (nextButton) {
+            nextButton.addEventListener('click', function() {
+                loadProducts('/home?page=' + nextButton.dataset.page);
+            });
+        }
+
+        if (prevButton) {
+            prevButton.addEventListener('click', function() {
+                loadProducts('/home?page=' + prevButton.dataset.page);
+            });
+        }
+    });
+
+    function loadProducts(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('product-grid').innerHTML = data;
+            });
+    }
+</script>
+
+</html>
